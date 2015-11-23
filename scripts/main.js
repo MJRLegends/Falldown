@@ -496,7 +496,7 @@ function blockRectangle(r1, r2) {
 function render() {
 	//Clears the screen
     drawingSurface.clearRect(0, 0, canvas.width, canvas.height);
-	if (sprites.length !== 0) {
+	if (sprites.length !== 0 && currentScreen == "game") {
 		//Render each sprite in the array
 		drawingSurface.shadowOffsetX = 0;
 		drawingSurface.shadowOffsetY = 0;
