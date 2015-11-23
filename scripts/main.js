@@ -45,6 +45,7 @@ var sprites = []; //An array to store the sprites
 var menuButtons = []; //An array to store the main menu buttons
 var settingsButtons = []; //An array to store the settings menu buttons
 var pausedButtons = []; //An array to store the pasued menu buttons
+var gameOverButtons = []; //An array to store the game over screen buttons
 
 //Load the image
 var image = new Image();
@@ -130,11 +131,14 @@ window.addEventListener("mousedown", function(event) {
 			if(y >= buttonTempY && y <= (buttonTempY + 60)){
 				currentDifficulty = "easy";
 			}
-			else if(y >= buttonTempY  + 100 && y <= (buttonTempY + 60) + 100){
+			else if(y >= buttonTempY  + 75 && y <= (buttonTempY + 60) + 75){
 				currentDifficulty = "medium";
 			}
-			else if(y >= buttonTempY + 200 && y <= (buttonTempY + 60) + 200){
+			else if(y >= buttonTempY + 150 && y <= (buttonTempY + 60) + 150){
 				currentDifficulty = "hard";
+			}
+			else if(y >= buttonTempY + 225 && y <= (buttonTempY + 60) + 225){
+				currentDifficulty = "very Hard";
 			}
 			else if(y >= buttonTempY + 300 && y <= (buttonTempY + 60) + 300){
 				currentScreen = "mainMenu";
@@ -149,6 +153,16 @@ window.addEventListener("mousedown", function(event) {
 				gameStarted = false;
 				paused = false;
 			}
+	}
+	else if(currentScreen == "gameOver"){ // Paused Menu inputs
+		if(x >= buttonTempX && x <= (buttonTempX + 200)){
+			if(y >= buttonTempY && y <= (buttonTempY + 60)){
+				currentScreen = "mainMenu";
+				pressedESC = false;
+				gameStarted = false;
+				paused = false;
+			}
+		}
 	}
 }, false);
 
@@ -198,7 +212,7 @@ function loadButtons(){ // Creates the buttons
 	//Medium
 	tempbutton = Object.create(buttonObject);
 	tempbutton.x = (canvas.width / 2) - 100;
-	tempbutton.y = 300;
+	tempbutton.y = 275;
 	tempbutton.text = "Medium";
 	tempbutton.textOffsetX = 50;
 	tempbutton.textOffsetY = 38;
@@ -207,13 +221,22 @@ function loadButtons(){ // Creates the buttons
 	//Hard
 	tempbutton = Object.create(buttonObject);
 	tempbutton.x = (canvas.width / 2) - 100;
-	tempbutton.y = 400;
+	tempbutton.y = 350;
 	tempbutton.text = "Hard";
 	tempbutton.textOffsetX = 70;
 	tempbutton.textOffsetY = 38;
 	settingsButtons.push(tempbutton);
 	
-	//Creates the Back to menu buttons for settings menu
+	//Very Hard
+	tempbutton = Object.create(buttonObject);
+	tempbutton.x = (canvas.width / 2) - 100;
+	tempbutton.y = 425;
+	tempbutton.text = "Very Hard";
+	tempbutton.textOffsetX = 35;
+	tempbutton.textOffsetY = 38;
+	settingsButtons.push(tempbutton);
+	
+	//Creates the Back to menu button for settings menu
 	tempbutton = Object.create(buttonObject);
 	tempbutton.x = (canvas.width / 2) - 100;
 	tempbutton.y = 500;
@@ -222,7 +245,7 @@ function loadButtons(){ // Creates the buttons
 	tempbutton.textOffsetY = 38;
 	settingsButtons.push(tempbutton);
 	
-	//Creates the Back to menu buttons for the pause menu
+	//Creates the Back to menu button for the pause menu
 	tempbutton = Object.create(buttonObject);
 	tempbutton.x = (canvas.width / 2) - 100;
 	tempbutton.y = 200;
@@ -230,6 +253,15 @@ function loadButtons(){ // Creates the buttons
 	tempbutton.textOffsetX = 15;
 	tempbutton.textOffsetY = 35;
 	pausedButtons.push(tempbutton);	
+	
+	//Creates the Back to menu button for the game over screen
+	tempbutton = Object.create(buttonObject);
+	tempbutton.x = (canvas.width / 2) - 100;
+	tempbutton.y = 200;
+	tempbutton.text = "Back to menu";
+	tempbutton.textOffsetX = 15;
+	tempbutton.textOffsetY = 35;
+	gameOverButtons.push(tempbutton);	
 }
 
 function update(){ // Update Method
@@ -279,6 +311,11 @@ function update(){ // Update Method
 						case "hard":
 							scrollingSpeed = scrollingSpeed + 0.05;
 							playerspeed = playerspeed + 0.0065;
+							break;
+							
+						case "very Hard":
+							scrollingSpeed = scrollingSpeed + 0.08;
+							playerspeed = playerspeed + 0.0075;
 							break;
 					}
 					tick = 0; // Resets the tick variable
@@ -330,6 +367,7 @@ function update(){ // Update Method
 					if (player.y < 0) { // If the player hits the top/ Game Over!
 						player.y = 0;
 						gameStart = false; // Makes the game reset
+						currentScreen = "gameOver";
 						if (highestscore < score)
 							highestscore = score;
 					}
@@ -520,6 +558,8 @@ function render() {
 		mainMenu();
 	else if(currentScreen == "settings")
 		settings();
+	else if(currentScreen == "gameOver")
+		gameOver();
 }
 
 function mainMenu(){ // Render method for the main menu
@@ -599,7 +639,7 @@ function settings(){ // Render method for the settings menu
 		//Render the button's text
 		drawingSurface.font = "25px Verdana";
 		if(i < settingsButtons.length){
-			if(settingsButtons[i].text.toLowerCase() == currentDifficulty)
+			if(settingsButtons[i].text.toLowerCase() == currentDifficulty.toLowerCase())
 				drawingSurface.fillStyle = "#000000";
 			else
 				drawingSurface.fillStyle = "#FFFFFF";
@@ -607,6 +647,51 @@ function settings(){ // Render method for the settings menu
 		else
 			drawingSurface.fillStyle = "#FFFFFF";
 		drawingSurface.fillText(settingsButtons[i].text, settingsButtons[i].x + settingsButtons[i].textOffsetX,  settingsButtons[i].y + settingsButtons[i].textOffsetY);
+	}
+}
+
+function gameOver(){ // Render method for the game over screen
+	//Renders the background image for the main menu
+	var image = new Image();
+	image.src= "images/menuBackground.png";
+	image.blur = true;
+	drawingSurface.drawImage(image,0,0,canvas.width,canvas.height);
+	
+	//Renders menu title to the canvas
+	var gradient = drawingSurface.createLinearGradient(0, 0, canvas.width, 0);
+	gradient.addColorStop("0", "blue");
+	gradient.addColorStop("0.5", "magenta");
+	gradient.addColorStop("1.0", "red");
+	// Fill with gradient
+	drawingSurface.shadowOffsetX = 5;
+	drawingSurface.shadowOffsetY = 5;
+	drawingSurface.shadowBlur = 5;
+	drawingSurface.shadowColor="#FFBAF7";
+	drawingSurface.font = "100px Verdana";
+	drawingSurface.fillStyle = gradient;
+	drawingSurface.fillText("Game Over!", (canvas.width / 2) - 300, 150);
+	drawingSurface.font = "50px Verdana";
+	drawingSurface.fillStyle = "#FFFFFF";
+	drawingSurface.shadowColor="#000000";
+	drawingSurface.fillText("Your score was: " + highestscore, (canvas.width / 2) - 240, 450);
+	//Renders buttons to the canvas
+	for(var i = 0; i < gameOverButtons.length; i++){
+		//Render the button
+		drawingSurface.shadowOffsetX = 2;
+		drawingSurface.shadowOffsetY = 2;
+		drawingSurface.shadowBlur = 5;
+		drawingSurface.shadowColor="#000000";
+		
+		gradient = drawingSurface.createLinearGradient(0, 0, canvas.width, 0);
+		gradient.addColorStop("0.5", "blue");
+		gradient.addColorStop("1.0", "cyan");
+		drawingSurface.fillStyle = gradient;
+		drawingSurface.fillRect(gameOverButtons[i].x, gameOverButtons[i].y, 200,60);
+		
+		//Render the button's text
+		drawingSurface.font = "25px Verdana";
+		drawingSurface.fillStyle = "#FFFFFF";
+		drawingSurface.fillText(gameOverButtons[i].text, gameOverButtons[i].x + gameOverButtons[i].textOffsetX,  gameOverButtons[i].y + gameOverButtons[i].textOffsetY);
 	}
 }
 
