@@ -554,7 +554,7 @@ function render() {
 			}
 		}
 	}
-	if(gameStarted == false && currentScreen == "mainMenu")
+	else if(gameStarted == false && currentScreen == "mainMenu")
 		mainMenu();
 	else if(currentScreen == "settings")
 		settings();
