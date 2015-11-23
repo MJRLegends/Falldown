@@ -180,8 +180,9 @@ function gameMain(){ // Main method
 }
 
 function loadButtons(){ // Creates the buttons
+	var tempbutton;
 	//Creates the Start Game button
-	var tempbutton = Object.create(buttonObject);
+	tempbutton = Object.create(buttonObject);
 	tempbutton.x = (canvas.width / 2) - 100;
 	tempbutton.y = 200;
 	tempbutton.text = "Start Game";
@@ -499,15 +500,38 @@ function blockRectangle(r1, r2) {
     return collisionSide;
 }
 
+function createGradient(blue, magenta, red){
+	var gradient = drawingSurface.createLinearGradient(0, 0, canvas.width, 0);
+	gradient.addColorStop(""+ blue, "blue");
+	gradient.addColorStop("" + magenta, "magenta");
+	gradient.addColorStop("" + red, "red");
+	return gradient;
+}
+
+function addShadow(colour, OffsetX, OffsetY, blur){
+	drawingSurface.shadowOffsetX = OffsetX;
+	drawingSurface.shadowOffsetY = OffsetY;
+	drawingSurface.shadowBlur = blur;
+	drawingSurface.shadowColor=colour;
+}
+
+function drawText(style, font, text, x, y){
+	drawingSurface.fillStyle = style;
+	drawingSurface.font = font;
+	drawingSurface.fillText(text, x, y);
+}
+
+function drawRect(style, x, y, width, height){
+	drawingSurface.fillStyle = style;
+	drawingSurface.fillRect(x, y, width, height);
+}
+
 function render() {
 	//Clears the screen
     drawingSurface.clearRect(0, 0, canvas.width, canvas.height);
 	if (sprites.length !== 0 && currentScreen == "game") {
 		//Render each sprite in the array
-		drawingSurface.shadowOffsetX = 0;
-		drawingSurface.shadowOffsetY = 0;
-		drawingSurface.shadowBlur = 0;
-		drawingSurface.shadowColor="#000000";
+		addShadow("#000000", 0, 0, 0);
 		for (var i = 0; i < sprites.length; i++) {
 			var sprite = sprites[i];
 			//Draws image to the canvas
@@ -521,56 +545,36 @@ function render() {
 		}
 		
 		//Renders game based text to the canvas
-		drawingSurface.fillStyle = "#54A4FF";
-		drawingSurface.shadowOffsetX = 1;
-		drawingSurface.shadowOffsetY = 1;
-		drawingSurface.shadowBlur = 2;
-		drawingSurface.shadowColor="#FFFFFF";
-		drawingSurface.font = "25px Verdana";
-		drawingSurface.fillText("Score: " + score, 15, 25);
-		drawingSurface.fillText("Highest Score: " + highestscore, 220, 25);
+		addShadow("#FFFFFF", 1, 1, 2);
+		drawText("#54A4FF", "25px Verdana", "Score: " + score, 15, 25);
+		drawText("#54A4FF", "25px Verdana", "Highest Score: " + highestscore, 220, 25);
 		switch(currentDifficulty){
 			case "easy":
-				drawingSurface.fillText("Difficulty: Easy", 550, 25);
+				drawText("#54A4FF", "25px Verdana", "Difficulty: Easy", 550, 25);
 				break;
 			case "medium":
-				drawingSurface.fillText("Difficulty: Medium", 550, 25);
+				drawText("#54A4FF", "25px Verdana", "Difficulty: Medium", 550, 25);
 				break;
 			case "hard":
-				drawingSurface.fillText("Difficulty: Hard", 550, 25);
+				drawText("#54A4FF", "25px Verdana", "Difficulty: Hard", 550, 25);
 				break;
 			case "very Hard":
-				drawingSurface.fillText("Difficulty: Very Hard", 550, 25);
+				drawText("#54A4FF", "25px Verdana", "Difficulty: Very Hard", 550, 25);
 				break;
 		}	
-		drawingSurface.fillText("FPS : " + fps.getFPS(), 700, (canvas.height - 25));
-		//drawingSurface.fillText("Scrolling Speed: " + scrollingSpeed, 220, 75);
+		drawText("#54A4FF", "25px Verdana", "FPS : " + fps.getFPS(), 700, (canvas.height - 25));
+
 		if(paused){
-			drawingSurface.font = "35px Verdana";
-			drawingSurface.fillStyle = "#FFFFFF";
-			drawingSurface.shadowOffsetX = 1;
-			drawingSurface.shadowOffsetY = 1;
-			drawingSurface.shadowBlur = 2;
-			drawingSurface.shadowColor="#000000";
-			drawingSurface.fillText("Paused!", (canvas.width / 2) - 72, canvas.height / 2);
+			addShadow("#FFFFFF", 1, 1, 2);
+			drawText("#FFFFFF", "35px Verdana", "Paused!", (canvas.width / 2) - 72, canvas.height / 2);
 			//Renders buttons to the canvas
 			for(var i = 0; i < pausedButtons.length; i++){
 				//Render the button
-				drawingSurface.shadowOffsetX = 2;
-				drawingSurface.shadowOffsetY = 2;
-				drawingSurface.shadowBlur = 5;
-				drawingSurface.shadowColor="#000000";
-				
-				var gradient = drawingSurface.createLinearGradient(0, 0, canvas.width, 0);
-				gradient.addColorStop("0.5", "blue");
-				gradient.addColorStop("1.0", "cyan");
-				drawingSurface.fillStyle = gradient;
-				drawingSurface.fillRect(pausedButtons[i].x, pausedButtons[i].y, 200,60);
+				addShadow("#000000", 2, 2, 5);
+				drawRect(createGradient(0.5, 0, 1.0), pausedButtons[i].x, pausedButtons[i].y, 200, 60);
 				
 				//Render the button's text
-				drawingSurface.font = "25px Verdana";
-				drawingSurface.fillStyle = "#FFFFFF";
-				drawingSurface.fillText(pausedButtons[i].text, pausedButtons[i].x + pausedButtons[i].textOffsetX,  pausedButtons[i].y + pausedButtons[i].textOffsetY);
+				drawText("#FFFFFF", "25px Verdana", pausedButtons[i].text, pausedButtons[i].x + pausedButtons[i].textOffsetX,  pausedButtons[i].y + pausedButtons[i].textOffsetY);
 			}
 		}
 	}
@@ -588,41 +592,20 @@ function mainMenu(){ // Render method for the main menu
 	//Renders the background image for the main menu
 	var image = new Image();
 	image.src= "images/menuBackground.png";
-	image.blur = true;
 	drawingSurface.drawImage(image,0,0,canvas.width,canvas.height);
 	
 	//Renders menu title to the canvas
-	var gradient = drawingSurface.createLinearGradient(0, 0, canvas.width, 0);
-	gradient.addColorStop("0", "blue");
-	gradient.addColorStop("0.5", "magenta");
-	gradient.addColorStop("1.0", "red");
-	// Fill with gradient
-	drawingSurface.shadowOffsetX = 5;
-	drawingSurface.shadowOffsetY = 5;
-	drawingSurface.shadowBlur = 5;
-	drawingSurface.shadowColor="#FFBAF7";
-	drawingSurface.font = "100px Verdana";
-	drawingSurface.fillStyle = gradient;
-	drawingSurface.fillText("Falldown!", (canvas.width / 2) - 225, 150);
+	addShadow("#FFBAF7", 5, 5, 5);
+	drawText(createGradient(0, 0.5, 1.0), "100px Verdana", "Falldown!", (canvas.width / 2) - 225, 150);
 
 	//Renders buttons to the canvas
 	for(var i = 0; i < menuButtons.length; i++){
 		//Render the button
-		drawingSurface.shadowOffsetX = 2;
-		drawingSurface.shadowOffsetY = 2;
-		drawingSurface.shadowBlur = 5;
-		drawingSurface.shadowColor="#000000";
-		
-		gradient = drawingSurface.createLinearGradient(0, 0, canvas.width, 0);
-		gradient.addColorStop("0.5", "blue");
-		gradient.addColorStop("1.0", "cyan");
-		drawingSurface.fillStyle = gradient;
-		drawingSurface.fillRect(menuButtons[i].x, menuButtons[i].y, 200,60);
+		addShadow("#000000", 2, 2, 5);
+		drawRect(createGradient(0.5, 0, 1.0), menuButtons[i].x, menuButtons[i].y, 200, 60);
 		
 		//Render the button's text
-		drawingSurface.font = "25px Verdana";
-		drawingSurface.fillStyle = "#FFFFFF";
-		drawingSurface.fillText(menuButtons[i].text, menuButtons[i].x + menuButtons[i].textOffsetX,  menuButtons[i].y + menuButtons[i].textOffsetY);
+		drawText("#FFFFFF", "25px Verdana", menuButtons[i].text, menuButtons[i].x + menuButtons[i].textOffsetX,  menuButtons[i].y + menuButtons[i].textOffsetY);
 	}
 }
 
@@ -630,45 +613,25 @@ function settings(){ // Render method for the settings menu
 	//Clears the screen
     drawingSurface.clearRect(0, 0, canvas.width, canvas.height);
 	//Renders menu title to the canvas
-	var gradient = drawingSurface.createLinearGradient(0, 0, canvas.width, 0);
-	gradient.addColorStop("0", "blue");
-	gradient.addColorStop("0.5", "magenta");
-	gradient.addColorStop("1.0", "red");
-	// Fill with gradient
-	drawingSurface.shadowOffsetX = 5;
-	drawingSurface.shadowOffsetY = 5;
-	drawingSurface.shadowBlur = 5;
-	drawingSurface.shadowColor="#FFBAF7";
-	drawingSurface.font = "100px Verdana";
-	drawingSurface.fillStyle = gradient;
-	drawingSurface.fillText("Settings!", (canvas.width / 2) - 220, 150);
+
+	addShadow("#FFBAF7", 5, 5, 5);
+	drawText(createGradient(0, 0.5, 1.0), "100px Verdana", "Settings!", (canvas.width / 2) - 220, 150);
 
 	//Renders buttons to the canvas
 	for(var i = 0; i < settingsButtons.length; i++){
 		//Render the button
-		drawingSurface.shadowOffsetX = 2;
-		drawingSurface.shadowOffsetY = 2;
-		drawingSurface.shadowBlur = 5;
-		drawingSurface.shadowColor="#000000";
-		
-		gradient = drawingSurface.createLinearGradient(0, 0, canvas.width, 0);
-		gradient.addColorStop("0", "magenta");
-		gradient.addColorStop("0.5", "blue");
-		gradient.addColorStop("1.0", "red");
-		drawingSurface.fillStyle = gradient;
-		drawingSurface.fillRect(settingsButtons[i].x, settingsButtons[i].y, 200,60);
+		addShadow("#000000", 2, 2, 5);
+		drawRect(createGradient(0.5, 0, 1.0), settingsButtons[i].x, settingsButtons[i].y, 200, 60);
 		
 		//Render the button's text
-		drawingSurface.font = "25px Verdana";
 		if(i < settingsButtons.length){
 			if(settingsButtons[i].text.toLowerCase() == currentDifficulty.toLowerCase())
-				drawingSurface.fillStyle = "#000000";
+				drawText("#000000", "25px Verdana", settingsButtons[i].text, settingsButtons[i].x + settingsButtons[i].textOffsetX,  settingsButtons[i].y + settingsButtons[i].textOffsetY);
 			else
-				drawingSurface.fillStyle = "#FFFFFF";
+				drawText("#FFFFFF", "25px Verdana", settingsButtons[i].text, settingsButtons[i].x + settingsButtons[i].textOffsetX,  settingsButtons[i].y + settingsButtons[i].textOffsetY);
 		}
 		else
-			drawingSurface.fillStyle = "#FFFFFF";
-		drawingSurface.fillText(settingsButtons[i].text, settingsButtons[i].x + settingsButtons[i].textOffsetX,  settingsButtons[i].y + settingsButtons[i].textOffsetY);
+			drawText("#FFFFFF", "25px Verdana", settingsButtons[i].text, settingsButtons[i].x + settingsButtons[i].textOffsetX,  settingsButtons[i].y + settingsButtons[i].textOffsetY);
 	}
 }
 
@@ -676,51 +639,29 @@ function gameOver(completed){ // Render method for the game over screen
 	//Renders the background image for the main menu
 	var image = new Image();
 	image.src= "images/menuBackground.png";
-	image.blur = true;
 	drawingSurface.drawImage(image,0,0,canvas.width,canvas.height);
 	
 	//Renders menu title to the canvas
-	var gradient = drawingSurface.createLinearGradient(0, 0, canvas.width, 0);
-	gradient.addColorStop("0", "blue");
-	gradient.addColorStop("0.5", "magenta");
-	gradient.addColorStop("1.0", "red");
 	// Fill with gradient
-	drawingSurface.shadowOffsetX = 5;
-	drawingSurface.shadowOffsetY = 5;
-	drawingSurface.shadowBlur = 5;
-	drawingSurface.shadowColor="#FFBAF7";
-	drawingSurface.fillStyle = gradient;
+	addShadow("#FFBAF7", 5, 5, 5);
 	if(!completed){
-		drawingSurface.font = "100px Verdana";
-		drawingSurface.fillText("Game Over!", (canvas.width / 2) - 300, 150);
+		drawText(createGradient(0, 0.5, 1.0), "100px Verdana", "Game Over!", (canvas.width / 2) - 300, 150);
 	}
 	else {
-		drawingSurface.font = "90px Verdana";
-		drawingSurface.fillText("Game Completed!", (canvas.width / 2) - 400, 150);
+		drawText(createGradient(0, 0.5, 1.0), "90px Verdana", "Game Completed!", (canvas.width / 2) - 400, 150);
 	}
-	drawingSurface.font = "50px Verdana";
-	drawingSurface.fillStyle = "#FFFFFF";
-	drawingSurface.shadowColor="#000000";
-	drawingSurface.fillText("Your score was: " + score, (canvas.width / 2) - 240, 450);
-	drawingSurface.fillText("Highest Score: " + highestscore, (canvas.width / 2) - 230, 550);
+
+	addShadow("#000000", 5, 5, 5);
+	drawText("#FFFFFF", "50px Verdana", "Your score was: " + score, (canvas.width / 2) - 240, 450);
+	drawText("#FFFFFF", "50px Verdana", "Highest Score: " + highestscore, (canvas.width / 2) - 230, 550);
 	//Renders buttons to the canvas
 	for(var i = 0; i < gameOverButtons.length; i++){
 		//Render the button
-		drawingSurface.shadowOffsetX = 2;
-		drawingSurface.shadowOffsetY = 2;
-		drawingSurface.shadowBlur = 5;
-		drawingSurface.shadowColor="#000000";
-		
-		gradient = drawingSurface.createLinearGradient(0, 0, canvas.width, 0);
-		gradient.addColorStop("0.5", "blue");
-		gradient.addColorStop("1.0", "cyan");
-		drawingSurface.fillStyle = gradient;
-		drawingSurface.fillRect(gameOverButtons[i].x, gameOverButtons[i].y, 200,60);
+		addShadow("#000000", 2, 2, 5);
+		drawRect(createGradient(0.5, 0, 1.0), gameOverButtons[i].x, gameOverButtons[i].y, 200, 60);
 		
 		//Render the button's text
-		drawingSurface.font = "25px Verdana";
-		drawingSurface.fillStyle = "#FFFFFF";
-		drawingSurface.fillText(gameOverButtons[i].text, gameOverButtons[i].x + gameOverButtons[i].textOffsetX,  gameOverButtons[i].y + gameOverButtons[i].textOffsetY);
+		drawText("#FFFFFF", "25px Verdana", gameOverButtons[i].text, gameOverButtons[i].x + gameOverButtons[i].textOffsetX,  gameOverButtons[i].y + gameOverButtons[i].textOffsetY);
 	}
 }
 
