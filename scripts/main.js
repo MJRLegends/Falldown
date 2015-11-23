@@ -154,7 +154,7 @@ window.addEventListener("mousedown", function(event) {
 				paused = false;
 			}
 	}
-	else if(currentScreen == "gameOver"){ // Paused Menu inputs
+	else if(currentScreen == "gameOver" || currentScreen == "gameCompleted"){ // Paused Menu inputs
 		if(x >= buttonTempX && x <= (buttonTempX + 200)){
 			if(y >= buttonTempY && y <= (buttonTempY + 60)){
 				currentScreen = "mainMenu";
@@ -370,6 +370,13 @@ function update(){ // Update Method
 						if (highestscore < score)
 							highestscore = score;
 					}
+					
+					if(sprites[sprites.length - 1].y <= player.y){ // If the player completes the game
+						gameStarted = false;
+						currentScreen = "gameCompleted";
+						if (highestscore < score)
+							highestscore = score;
+					}
 					if (player.x + player.width > canvas.width)
 						player.x = canvas.width - player.width;
 					if (player.y + player.height > canvas.height)
@@ -383,7 +390,7 @@ function update(){ // Update Method
 }
 
 function spawnPlatforms(){
-	for (var i = 0; i < 1000; i++) {
+	for (var i = 0; i < 500; i++) {
 		//Makes the left side of the platforms at a random length
 		sprites.push(Object.create(spriteObject));
 		sprites[sprites.length - 1].y = yLevel + ySpacing; // Adds the previous y and spacing to the y
@@ -572,7 +579,9 @@ function render() {
 	else if(currentScreen == "settings")
 		settings();
 	else if(currentScreen == "gameOver")
-		gameOver();
+		gameOver(false);
+	else if(currentScreen == "gameCompleted")
+		gameOver(true);
 }
 
 function mainMenu(){ // Render method for the main menu
@@ -663,7 +672,7 @@ function settings(){ // Render method for the settings menu
 	}
 }
 
-function gameOver(){ // Render method for the game over screen
+function gameOver(completed){ // Render method for the game over screen
 	//Renders the background image for the main menu
 	var image = new Image();
 	image.src= "images/menuBackground.png";
@@ -680,9 +689,15 @@ function gameOver(){ // Render method for the game over screen
 	drawingSurface.shadowOffsetY = 5;
 	drawingSurface.shadowBlur = 5;
 	drawingSurface.shadowColor="#FFBAF7";
-	drawingSurface.font = "100px Verdana";
 	drawingSurface.fillStyle = gradient;
-	drawingSurface.fillText("Game Over!", (canvas.width / 2) - 300, 150);
+	if(!completed){
+		drawingSurface.font = "100px Verdana";
+		drawingSurface.fillText("Game Over!", (canvas.width / 2) - 300, 150);
+	}
+	else {
+		drawingSurface.font = "90px Verdana";
+		drawingSurface.fillText("Game Completed!", (canvas.width / 2) - 400, 150);
+	}
 	drawingSurface.font = "50px Verdana";
 	drawingSurface.fillStyle = "#FFFFFF";
 	drawingSurface.shadowColor="#000000";
