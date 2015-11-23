@@ -300,22 +300,22 @@ function update(){ // Update Method
 					switch(currentDifficulty){
 						case "easy":
 							scrollingSpeed = scrollingSpeed + 0.005;
-							playerspeed = playerspeed + 0.0045;
+							playerspeed = playerspeed + 0.0055;
 							break;
 						
 						case "medium":
 							scrollingSpeed = scrollingSpeed + 0.01;
-							playerspeed = playerspeed + 0.0055;
+							playerspeed = playerspeed + 0.0065;
 							break;
 						
 						case "hard":
 							scrollingSpeed = scrollingSpeed + 0.05;
-							playerspeed = playerspeed + 0.0065;
+							playerspeed = playerspeed + 0.0085;
 							break;
 							
 						case "very Hard":
 							scrollingSpeed = scrollingSpeed + 0.08;
-							playerspeed = playerspeed + 0.0075;
+							playerspeed = playerspeed + 0.010;
 							break;
 					}
 					tick = 0; // Resets the tick variable
