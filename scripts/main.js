@@ -520,9 +520,23 @@ function render() {
 		drawingSurface.shadowBlur = 2;
 		drawingSurface.shadowColor="#FFFFFF";
 		drawingSurface.font = "25px Verdana";
-		drawingSurface.fillText("Score : " + score, 15, 25);
-		drawingSurface.fillText("Highest Score : " + highestscore, 220, 25);
-		drawingSurface.fillText("FPS : " + fps.getFPS(), 700, 25);
+		drawingSurface.fillText("Score: " + score, 15, 25);
+		drawingSurface.fillText("Highest Score: " + highestscore, 220, 25);
+		switch(currentDifficulty){
+			case "easy":
+				drawingSurface.fillText("Difficulty: Easy", 550, 25);
+				break;
+			case "medium":
+				drawingSurface.fillText("Difficulty: Medium", 550, 25);
+				break;
+			case "hard":
+				drawingSurface.fillText("Difficulty: Hard", 550, 25);
+				break;
+			case "very Hard":
+				drawingSurface.fillText("Difficulty: Very Hard", 550, 25);
+				break;
+		}	
+		drawingSurface.fillText("FPS : " + fps.getFPS(), 700, (canvas.height - 25));
 		//drawingSurface.fillText("Scrolling Speed: " + scrollingSpeed, 220, 75);
 		if(paused){
 			drawingSurface.font = "35px Verdana";
