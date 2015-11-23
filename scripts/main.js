@@ -365,8 +365,7 @@ function update(){ // Update Method
 						player.x = 0;
 
 					if (player.y < 0) { // If the player hits the top/ Game Over!
-						player.y = 0;
-						gameStart = false; // Makes the game reset
+						gameStarted = false;
 						currentScreen = "gameOver";
 						if (highestscore < score)
 							highestscore = score;
@@ -673,7 +672,8 @@ function gameOver(){ // Render method for the game over screen
 	drawingSurface.font = "50px Verdana";
 	drawingSurface.fillStyle = "#FFFFFF";
 	drawingSurface.shadowColor="#000000";
-	drawingSurface.fillText("Your score was: " + highestscore, (canvas.width / 2) - 240, 450);
+	drawingSurface.fillText("Your score was: " + score, (canvas.width / 2) - 240, 450);
+	drawingSurface.fillText("Highest Score: " + highestscore, (canvas.width / 2) - 230, 550);
 	//Renders buttons to the canvas
 	for(var i = 0; i < gameOverButtons.length; i++){
 		//Render the button
