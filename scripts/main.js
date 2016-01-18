@@ -46,6 +46,7 @@ var menuButtons = []; //An array to store the main menu buttons
 var settingsButtons = []; //An array to store the settings menu buttons
 var pausedButtons = []; //An array to store the pasued menu buttons
 var gameOverButtons = []; //An array to store the game over screen buttons
+var controlsButtons = []; //An array to store the controls screen buttons
 
 //Load the image
 var image = new Image();
@@ -125,6 +126,8 @@ window.addEventListener("mousedown", function(event) {
 			}
 			else if(y >= buttonTempY + 100 && y <= (buttonTempY + 60) + 100)
 				currentScreen = "settings";
+			else if(y >= buttonTempY + 200 && y <= (buttonTempY + 60) + 200)
+				currentScreen = "controls";
 	}
 	else if(currentScreen == "settings"){ // Settings Menu inputs
 		if(x >= buttonTempX && x <= (buttonTempX + 200)){
@@ -155,6 +158,16 @@ window.addEventListener("mousedown", function(event) {
 			}
 	}
 	else if(currentScreen == "gameOver" || currentScreen == "gameCompleted"){ // Paused Menu inputs
+		if(x >= buttonTempX && x <= (buttonTempX + 200)){
+			if(y >= buttonTempY && y <= (buttonTempY + 60)){
+				currentScreen = "mainMenu";
+				pressedESC = false;
+				gameStarted = false;
+				paused = false;
+			}
+		}
+	}
+	else if(currentScreen == "controls"){ // Paused Menu inputs
 		if(x >= buttonTempX && x <= (buttonTempX + 200)){
 			if(y >= buttonTempY && y <= (buttonTempY + 60)){
 				currentScreen = "mainMenu";
@@ -195,6 +208,15 @@ function loadButtons(){ // Creates the buttons
 	tempbutton.x = (canvas.width / 2) - 100;
 	tempbutton.y = 300;
 	tempbutton.text = "Settings";
+	tempbutton.textOffsetX = 45;
+	tempbutton.textOffsetY = 35;
+	menuButtons.push(tempbutton);
+	
+	//Creates the Settings button
+	tempbutton = Object.create(buttonObject);
+	tempbutton.x = (canvas.width / 2) - 100;
+	tempbutton.y = 400;
+	tempbutton.text = "Controls";
 	tempbutton.textOffsetX = 45;
 	tempbutton.textOffsetY = 35;
 	menuButtons.push(tempbutton);
@@ -263,6 +285,15 @@ function loadButtons(){ // Creates the buttons
 	tempbutton.textOffsetX = 15;
 	tempbutton.textOffsetY = 35;
 	gameOverButtons.push(tempbutton);	
+	
+	//Creates the Back to menu button for the game over screen
+	tempbutton = Object.create(buttonObject);
+	tempbutton.x = (canvas.width / 2) - 100;
+	tempbutton.y = 200;
+	tempbutton.text = "Back to menu";
+	tempbutton.textOffsetX = 15;
+	tempbutton.textOffsetY = 35;
+	controlsButtons.push(tempbutton);	
 }
 
 function update(){ // Update Method
@@ -372,7 +403,8 @@ function update(){ // Update Method
 							highestscore = score;
 					}
 					
-					if(sprites[sprites.length - 1].y <= player.y){ // If the player completes the game
+					// If the player completes the game
+					if(sprites[sprites.length - 1].y <= player.y){
 						gameStarted = false;
 						currentScreen = "gameCompleted";
 						if (highestscore < score)
@@ -382,7 +414,6 @@ function update(){ // Update Method
 						player.x = canvas.width - player.width;
 					if (player.y + player.height > canvas.height)
 						player.y = canvas.height - player.height;
-
 				}
 			}
 		}
@@ -429,7 +460,7 @@ function spawnPlatforms(){
 		else 
 			sprites[sprites.length - 1].sourceX = 128;
 		
-		yLevel += ySpacing; // Adds the y value to use for the next platform creation
+		yLevel+= ySpacing; // Adds the y value to use for the next platform creation
 	}
 }
 
@@ -586,10 +617,12 @@ function render() {
 		gameOver(false);
 	else if(currentScreen == "gameCompleted")
 		gameOver(true);
+	else if(currentScreen == "controls")
+		controls();
 }
 
 function mainMenu(){ // Render method for the main menu
-	//Renders the background image for the main menu
+	//Renders the background image
 	var image = new Image();
 	image.src= "images/menuBackground.png";
 	drawingSurface.drawImage(image,0,0,canvas.width,canvas.height);
@@ -610,13 +643,16 @@ function mainMenu(){ // Render method for the main menu
 }
 
 function settings(){ // Render method for the settings menu
-	//Clears the screen
-    drawingSurface.clearRect(0, 0, canvas.width, canvas.height);
+	//Renders the background image
+	var image = new Image();
+	image.src= "images/menuBackground.png";
+	drawingSurface.drawImage(image,0,0,canvas.width,canvas.height);
+	
 	//Renders menu title to the canvas
 
 	addShadow("#FFBAF7", 5, 5, 5);
 	drawText(createGradient(0, 0.5, 1.0), "100px Verdana", "Settings!", (canvas.width / 2) - 220, 150);
-
+	
 	//Renders buttons to the canvas
 	for(var i = 0; i < settingsButtons.length; i++){
 		//Render the button
@@ -632,6 +668,39 @@ function settings(){ // Render method for the settings menu
 		}
 		else
 			drawText("#FFFFFF", "25px Verdana", settingsButtons[i].text, settingsButtons[i].x + settingsButtons[i].textOffsetX,  settingsButtons[i].y + settingsButtons[i].textOffsetY);
+	}
+}
+
+function controls(){ // Render method for the main menu
+	//Renders the background image
+	var image = new Image();
+	image.src= "images/menuBackground.png";
+	drawingSurface.drawImage(image,0,0,canvas.width,canvas.height);
+	
+	//Renders menu title to the canvas
+	addShadow("#FFBAF7", 5, 5, 5);
+	drawText(createGradient(0, 0.5, 1.0), "100px Verdana", "Controls!", (canvas.width / 2) - 220, 150);
+
+	addShadow("#000000", 2, 2, 5);
+	drawText("#FFFFFF", "25px Verdana", "Left/right Arrows = Move player",(canvas.width / 2) - 205, 300);
+	drawText("#FFFFFF", "25px Verdana", "ESC - To Pause/Unpause the game",(canvas.width / 2) - 205, 330);
+	drawText("#FFFFFF", "25px Verdana", "Left Click Mouse - Click buttons in the main menu",(canvas.width / 2) - 290, 360);
+
+	//Renders buttons to the canvas
+	for(var i = 0; i < controlsButtons.length; i++){
+		//Render the button
+		addShadow("#000000", 2, 2, 5);
+		drawRect(createGradient(0.5, 0, 1.0), controlsButtons[i].x, controlsButtons[i].y, 200, 60);
+		
+		//Render the button's text
+		if(i < controlsButtons.length){
+			if(controlsButtons[i].text.toLowerCase() == currentDifficulty.toLowerCase())
+				drawText("#000000", "25px Verdana", controlsButtons[i].text, controlsButtons[i].x + controlsButtons[i].textOffsetX,  controlsButtons[i].y + controlsButtons[i].textOffsetY);
+			else
+				drawText("#FFFFFF", "25px Verdana", controlsButtons[i].text, controlsButtons[i].x + controlsButtons[i].textOffsetX,  controlsButtons[i].y + controlsButtons[i].textOffsetY);
+		}
+		else
+			drawText("#FFFFFF", "25px Verdana", controlsButtons[i].text, controlsButtons[i].x + controlsButtons[i].textOffsetX,  controlsButtons[i].y + controlsButtons[i].textOffsetY);
 	}
 }
 
